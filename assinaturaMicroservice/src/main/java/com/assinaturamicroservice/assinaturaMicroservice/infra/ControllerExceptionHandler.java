@@ -13,7 +13,7 @@ public class ControllerExceptionHandler {
 
     @ExceptionHandler(NoSuchElementException.class)
     public ResponseEntity<ExceptionDTO> handleNotFound(NoSuchElementException exception){
-        ExceptionDTO response = new ExceptionDTO(exception.getMessage() + "não encontrado");
+        ExceptionDTO response = new ExceptionDTO(exception.getMessage() + " não encontrado");
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
 }
