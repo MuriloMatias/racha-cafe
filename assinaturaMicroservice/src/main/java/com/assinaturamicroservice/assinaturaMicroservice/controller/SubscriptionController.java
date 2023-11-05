@@ -4,6 +4,7 @@ package com.assinaturamicroservice.assinaturaMicroservice.controller;
 import com.assinaturamicroservice.assinaturaMicroservice.domain.assinatura.Plan;
 import com.assinaturamicroservice.assinaturaMicroservice.dtos.PlanDTO;
 import com.assinaturamicroservice.assinaturaMicroservice.service.PlanService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,6 +36,15 @@ public class SubscriptionController {
         Plan newPlan = planService.getPlanByid(id);
         return new ResponseEntity<>(newPlan, HttpStatus.OK);
     }
+
+    //mapeia o que a rota faz
+    @DeleteMapping("/{id}")
+    @Transactional
+    public ResponseEntity<?> deletePlan(@PathVariable Long id){
+        planService.deletePlan(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
 
 
 
