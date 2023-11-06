@@ -2,8 +2,11 @@ package com.assinaturamicroservice.assinaturaMicroservice.controller;
 
 
 import com.assinaturamicroservice.assinaturaMicroservice.domain.assinatura.Plan;
+import com.assinaturamicroservice.assinaturaMicroservice.domain.assinatura.User;
 import com.assinaturamicroservice.assinaturaMicroservice.dtos.PlanDTO;
+import com.assinaturamicroservice.assinaturaMicroservice.dtos.UserDTO;
 import com.assinaturamicroservice.assinaturaMicroservice.service.PlanService;
+import com.assinaturamicroservice.assinaturaMicroservice.service.UserService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,6 +22,8 @@ public class SubscriptionController {
     @Autowired
     private PlanService planService;
 
+    @Autowired
+    private UserService userService;
     @PostMapping
     public ResponseEntity<Plan> createPlan(@RequestBody PlanDTO planData) {
         Plan newPlan = planService.createPlan(planData);
@@ -51,5 +56,10 @@ public class SubscriptionController {
         return new ResponseEntity<>(updatePlan, HttpStatus.OK);
     }
 
+    @PostMapping("/user")
+    public ResponseEntity<User> createUser(@RequestBody UserDTO userData) {
+        User newUser = userService.createUser(userData);
+        return new ResponseEntity<>(newUser, HttpStatus.CREATED);
+    }
 
 }
