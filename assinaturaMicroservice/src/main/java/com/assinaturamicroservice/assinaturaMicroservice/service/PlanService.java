@@ -47,4 +47,19 @@ public class PlanService {
         plan.setIsDeleted(Boolean.TRUE);
     }
 
+    public Plan updatePlan(Long id, PlanDTO updatePlan){
+        Plan oldPlan = getPlanByid(id);
+
+        if(updatePlan.name() != null){
+            oldPlan.setName(updatePlan.name());
+        }
+
+        if (updatePlan.description() != null){
+            oldPlan.setDescription(updatePlan.description());
+        }
+
+        return oldPlan;
+    }
 }
+
+
