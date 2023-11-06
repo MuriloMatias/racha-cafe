@@ -20,32 +20,36 @@ public class SubscriptionController {
     private PlanService planService;
 
     @PostMapping
-    public ResponseEntity<Plan> createPlan(@RequestBody PlanDTO planData){
+    public ResponseEntity<Plan> createPlan(@RequestBody PlanDTO planData) {
         Plan newPlan = planService.createPlan(planData);
         return new ResponseEntity<>(newPlan, HttpStatus.CREATED);
     }
 
     @GetMapping
-    public ResponseEntity<List<Plan>> getAllPlans(){
-        List<Plan> allPlans= planService.getAllPlans();
+    public ResponseEntity<List<Plan>> getAllPlans() {
+        List<Plan> allPlans = planService.getAllPlans();
         return new ResponseEntity<>(allPlans, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Plan> getPlanById(@PathVariable Long id){
+    public ResponseEntity<Plan> getPlanById(@PathVariable Long id) {
         Plan newPlan = planService.getPlanByid(id);
         return new ResponseEntity<>(newPlan, HttpStatus.OK);
     }
 
-    //mapeia o que a rota faz
     @DeleteMapping("/{id}")
     @Transactional
-    public ResponseEntity<?> deletePlan(@PathVariable Long id){
+    public ResponseEntity<?> deletePlan(@PathVariable Long id) {
         planService.deletePlan(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-
+    @PatchMapping("/{id}")
+    @Transactional
+    public ResponseEntity<Plan> updatePlan(@PathVariable Long id, @RequestBody PlanDTO data) {
+        Plan updatePlan = planService.updatePlan(id, data);
+        return new ResponseEntity<>(updatePlan, HttpStatus.OK);
+    }
 
 
 }
