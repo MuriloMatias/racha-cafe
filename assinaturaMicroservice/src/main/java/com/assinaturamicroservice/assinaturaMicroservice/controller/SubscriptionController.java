@@ -9,6 +9,7 @@ import com.assinaturamicroservice.assinaturaMicroservice.service.PlanService;
 import com.assinaturamicroservice.assinaturaMicroservice.service.UserService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.support.Repositories;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +25,7 @@ public class SubscriptionController {
 
     @Autowired
     private UserService userService;
+
     @PostMapping
     public ResponseEntity<Plan> createPlan(@RequestBody PlanDTO planData) {
         Plan newPlan = planService.createPlan(planData);
@@ -60,6 +62,13 @@ public class SubscriptionController {
     public ResponseEntity<User> createUser(@RequestBody UserDTO userData) {
         User newUser = userService.createUser(userData);
         return new ResponseEntity<>(newUser, HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/user/{id}")
+    @Transactional
+    public ResponseEntity<User> canceledUserPlan(@PathVariable Long id) {
+        User user = userService.canceledUserPlan(id);
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
 }

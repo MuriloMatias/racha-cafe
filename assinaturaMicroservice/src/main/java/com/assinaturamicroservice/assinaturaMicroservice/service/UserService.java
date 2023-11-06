@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -23,7 +24,9 @@ public class UserService {
     }
 
     public User createUser(UserDTO userDTO) {
+
         Plan plan = this.planRepository.getById(userDTO.plan().getId());
+
         if (plan == null) {
             throw new NoSuchElementException("plano");
         }
@@ -34,4 +37,16 @@ public class UserService {
         return newUser;
 
     }
+
+
+    public User canceledUserPlan(Long id) {
+        Optional<User> userOptional = this.userRepository.findByUserId(id);
+        if (userOptional.isEmpty()) {
+            throw new NoSuchElementException("User not found");
+        }
+        User user = userOptional.get();
+        user.setPlan(null);
+        return user;
+    }
+
 }
