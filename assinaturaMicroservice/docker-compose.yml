@@ -1,5 +1,15 @@
 version: '3'
 services:
+  assinatura_microservice:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+    networks:
+      - td_soft
 
   mysql:
     image: mysql:latest
@@ -13,6 +23,9 @@ services:
       - "3306:3306"
     volumes:
       - ./mysql_data:/var/lib/mysql
+    networks:
+      - td_soft
 
-volumes:
-  mysql_data:
+networks:
+  td_soft:
+    driver: bridge
