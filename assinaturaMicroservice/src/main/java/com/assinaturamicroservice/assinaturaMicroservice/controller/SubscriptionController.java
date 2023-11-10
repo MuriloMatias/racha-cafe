@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/sub")
+@RequestMapping("/api")
 public class SubscriptionController {
 
     @Autowired
@@ -26,32 +26,32 @@ public class SubscriptionController {
     @Autowired
     private UserService userService;
 
-    @PostMapping
+    @PostMapping("/plan")
     public ResponseEntity<Plan> createPlan(@RequestBody PlanDTO planData) {
         Plan newPlan = planService.createPlan(planData);
         return new ResponseEntity<>(newPlan, HttpStatus.CREATED);
     }
 
-    @GetMapping
+    @GetMapping("plan")
     public ResponseEntity<List<Plan>> getAllPlans() {
         List<Plan> allPlans = planService.getAllPlans();
         return new ResponseEntity<>(allPlans, HttpStatus.OK);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/plan/{id}")
     public ResponseEntity<Plan> getPlanById(@PathVariable Long id) {
         Plan newPlan = planService.getPlanByid(id);
         return new ResponseEntity<>(newPlan, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/plan/{id}")
     @Transactional
     public ResponseEntity<?> deletePlan(@PathVariable Long id) {
         planService.deletePlan(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping("/plan/{id}")
     @Transactional
     public ResponseEntity<Plan> updatePlan(@PathVariable Long id, @RequestBody PlanDTO data) {
         Plan updatePlan = planService.updatePlan(id, data);
