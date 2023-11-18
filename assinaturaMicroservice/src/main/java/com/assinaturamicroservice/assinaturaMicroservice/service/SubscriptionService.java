@@ -1,7 +1,7 @@
 package com.assinaturamicroservice.assinaturaMicroservice.service;
 
 import com.assinaturamicroservice.assinaturaMicroservice.domain.assinatura.Plan;
-import com.assinaturamicroservice.assinaturaMicroservice.domain.assinatura.User;
+import com.assinaturamicroservice.assinaturaMicroservice.domain.assinatura.Subscription;
 import com.assinaturamicroservice.assinaturaMicroservice.dtos.UserDTO;
 import com.assinaturamicroservice.assinaturaMicroservice.repositories.PlanRepository;
 import com.assinaturamicroservice.assinaturaMicroservice.repositories.UserRepository;
@@ -19,11 +19,11 @@ public class UserService {
     @Autowired
     private PlanRepository planRepository;
 
-    public void saveUser(User user) {
-        this.userRepository.save(user);
+    public void saveUser(Subscription subscription) {
+        this.userRepository.save(subscription);
     }
 
-    public User createUser(UserDTO userDTO) {
+    public Subscription createUser(UserDTO userDTO) {
 
         Plan plan = this.planRepository.getById(userDTO.plan().getId());
 
@@ -32,21 +32,21 @@ public class UserService {
         }
         userDTO.plan().setName(plan.getName());
         userDTO.plan().setDescription(plan.getDescription());
-        User newUser = new User(userDTO);
-        this.saveUser(newUser);
-        return newUser;
+        Subscription newSubscription = new Subscription(userDTO);
+        this.saveUser(newSubscription);
+        return newSubscription;
 
     }
 
 
-    public User canceledUserPlan(Long id) {
-        Optional<User> userOptional = this.userRepository.findByUserId(id);
+    public Subscription canceledUserPlan(Long id) {
+        Optional<Subscription> userOptional = this.userRepository.findByUserId(id);
         if (userOptional.isEmpty()) {
             throw new NoSuchElementException("User not found");
         }
-        User user = userOptional.get();
-        user.setPlan(null);
-        return user;
+        Subscription subscription = userOptional.get();
+        subscription.setPlan(null);
+        return subscription;
     }
 
 }
