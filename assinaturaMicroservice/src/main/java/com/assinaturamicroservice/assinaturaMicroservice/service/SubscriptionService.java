@@ -2,51 +2,56 @@ package com.assinaturamicroservice.assinaturaMicroservice.service;
 
 import com.assinaturamicroservice.assinaturaMicroservice.domain.assinatura.Plan;
 import com.assinaturamicroservice.assinaturaMicroservice.domain.assinatura.Subscription;
-import com.assinaturamicroservice.assinaturaMicroservice.dtos.UserDTO;
+import com.assinaturamicroservice.assinaturaMicroservice.dtos.SubscriptionDTO;
+import com.assinaturamicroservice.assinaturaMicroservice.exceptions.SubscriptionCreationException;
 import com.assinaturamicroservice.assinaturaMicroservice.repositories.PlanRepository;
-import com.assinaturamicroservice.assinaturaMicroservice.repositories.UserRepository;
+import com.assinaturamicroservice.assinaturaMicroservice.repositories.SubscriptionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
-public class UserService {
+public class SubscriptionService {
 
     @Autowired
-    private UserRepository userRepository;
+    private SubscriptionRepository subscriptionRepository;
     @Autowired
-    private PlanRepository planRepository;
+    private PlanService planService;
 
-    public void saveUser(Subscription subscription) {
-        this.userRepository.save(subscription);
+    public void saveSubscription(Subscription subscription) {
+        this.subscriptionRepository.save(subscription);
     }
 
-    public Subscription createUser(UserDTO userDTO) {
+    public Subscription createSubscription(SubscriptionDTO subscriptionDTO) {
 
-        Plan plan = this.planRepository.getById(userDTO.plan().getId());
-
-        if (plan == null) {
-            throw new NoSuchElementException("plano");
+        Plan plan = this.planService.getPlanByid(subscriptionDTO.plan().getId());
+        Optional<Subscription> subscription = this.subscriptionRepository.findSubscriptionByUserId(subscriptionDTO.userId());
+        if(subscription.isPresent()){
+            throw new SubscriptionCreationException.subscriptionAlreadyRegisterd();
         }
-        userDTO.plan().setName(plan.getName());
-        userDTO.plan().setDescription(plan.getDescription());
-        Subscription newSubscription = new Subscription(userDTO);
-        this.saveUser(newSubscription);
+        subscriptionDTO.plan().setName(plan.getName());
+        subscriptionDTO.plan().setDescription(plan.getDescription());
+        Subscription newSubscription = new Subscription(subscriptionDTO);
+        this.saveSubscription(newSubscription);
         return newSubscription;
+    }
+
+    public Subscription getPlan(Long id){
 
     }
 
 
-    public Subscription canceledUserPlan(Long id) {
-        Optional<Subscription> userOptional = this.userRepository.findByUserId(id);
-        if (userOptional.isEmpty()) {
-            throw new NoSuchElementException("User not found");
-        }
-        Subscription subscription = userOptional.get();
-        subscription.setPlan(null);
-        return subscription;
-    }
+//    public Subscription canceledUserPlan(Long id) {
+//        Optional<Subscription> userOptional = this.subscriptionRepository.findByUserId(id);
+//        if (userOptional.isEmpty()) {
+//            throw new NoSuchElementException("User not found");
+//        }
+//        Subscription subscription = userOptional.get();
+//        subscription.setPlan(null);
+//        return subscription;
+//    }
 
 }

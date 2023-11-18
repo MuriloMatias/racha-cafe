@@ -1,34 +1,45 @@
 package com.assinaturamicroservice.assinaturaMicroservice.domain.assinatura;
-import com.assinaturamicroservice.assinaturaMicroservice.dtos.PlanDTO;
-import com.assinaturamicroservice.assinaturaMicroservice.dtos.UserDTO;
+import com.assinaturamicroservice.assinaturaMicroservice.dtos.SubscriptionDTO;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
-@Entity(name="users")
-@Table(name="users")
+import java.util.Date;
+
+@Entity(name="subscription")
+@Table(name="subscription")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+public class Subscription {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Long userId;
+    private Long subscriptionId;
 
-    @Column(length = 128)
-    private String name;
-
-    @Column(length = 128)
-    private String email;
+    @Column()
+    private String userId;
 
     @ManyToOne
     @JoinColumn(name = "plan_id")
     private Plan plan;
 
-    public User(UserDTO userDTO){
-        this.name = userDTO.name();
-        this.email = userDTO.email();
-        this.plan = userDTO.plan();
+    @Column()
+    private Boolean isCanceled = Boolean.FALSE;
+
+    @CreationTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "created_date")
+    private Date creationDate;
+
+    @UpdateTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "last_modified_date")
+    private Date lastModifiedDate;
+    public Subscription(SubscriptionDTO subscriptionDTO){
+        this.userId = subscriptionDTO.userId();
+        this.plan = subscriptionDTO.plan();
     }
 
 }
