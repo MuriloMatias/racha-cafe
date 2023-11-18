@@ -80,16 +80,16 @@ public class SubscriptionController {
     public ResponseEntity<Subscription> createSubscribe(@RequestBody SubscriptionPlanIdDTO subscriptionPlanIdData) {
         Plan plan = new Plan();
         plan.setId(subscriptionPlanIdData.planId());
-        SubscriptionDTO subscriptionData = new SubscriptionDTO(subscriptionPlanIdData.userId(), plan);
+        SubscriptionDTO subscriptionData = new SubscriptionDTO(subscriptionPlanIdData.id(), plan);
         Subscription newSubscription = subscriptionService.createSubscription(subscriptionData);
         return new ResponseEntity<>(newSubscription, HttpStatus.CREATED);
     }
 
-//    @DeleteMapping("/user/{id}")
-//    @Transactional
-//    @Operation(summary = "Cancelar assinatura de plano")
-//    public ResponseEntity<Subscription> canceledUserPlan(@PathVariable Long id) {
-//        Subscription subscription = subscriptionService.canceledUserPlan(id);
-//        return new ResponseEntity<>(subscription, HttpStatus.OK);
-//    }
+    @PatchMapping("/subcribe/{subscriptionId}")
+    @Transactional
+    @Operation(summary = "Cancelar assinatura de plano")
+    public ResponseEntity<Subscription> canceledSubcription(@PathVariable Long subscriptionId) {
+        Subscription subscription = subscriptionService.canceledSubcription(subscriptionId);
+        return new ResponseEntity<>(subscription, HttpStatus.OK);
+    }
 }

@@ -39,19 +39,26 @@ public class SubscriptionService {
         return newSubscription;
     }
 
-    public Subscription getPlan(Long id){
-
+    public Subscription getSubcriptionById(Long id){
+        Optional<Subscription> searchSubcription = this.subscriptionRepository.findBySubscriptionId(id);
+        if (searchSubcription.isEmpty()){
+            throw new NoSuchElementException("Assinatura");
+        }
+        return searchSubcription.get();
     }
 
 
-//    public Subscription canceledUserPlan(Long id) {
-//        Optional<Subscription> userOptional = this.subscriptionRepository.findByUserId(id);
-//        if (userOptional.isEmpty()) {
-//            throw new NoSuchElementException("User not found");
-//        }
-//        Subscription subscription = userOptional.get();
-//        subscription.setPlan(null);
-//        return subscription;
-//    }
+    public Subscription canceledSubcription(Long subscriptionId) {
+        Subscription subscription = getSubcriptionById(subscriptionId);
+        subscription.setIsCanceled(Boolean.TRUE);
+        return subscription;
+    }
+
+    public Subscription changeSubscriptionPlan(Long subscriptionId, Long planId){
+        Subscription oldSubscription = getSubcriptionById(subscriptionId);
+        Plan plan = this.planService.getPlanByid(planId);
+        oldSubscription.setPlan(plan);
+        return oldSubscription;
+    }
 
 }
