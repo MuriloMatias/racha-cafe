@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -92,4 +93,14 @@ public class SubscriptionController {
         Subscription subscription = subscriptionService.canceledSubcription(subscriptionId);
         return new ResponseEntity<>(subscription, HttpStatus.OK);
     }
+
+    @PatchMapping("/subcribe/change_plan")
+    @Transactional
+    @Operation(summary = "Alterar plano da assiantura")
+    public ResponseEntity<Subscription> changeSubcriptionPlan(@RequestBody SubscriptionPlanIdDTO subscriptionPlanIdDTO){
+        Long planId = Long.parseLong(subscriptionPlanIdDTO.id());
+        Subscription subscription = subscriptionService.changeSubscriptionPlan(planId, subscriptionPlanIdDTO.planId());
+        return new ResponseEntity<>(subscription, HttpStatus.OK);
+    }
+
 }
