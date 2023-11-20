@@ -71,6 +71,7 @@ public class SubscriptionController {
         return new ResponseEntity<>(updatePlan, HttpStatus.OK);
     }
 
+    @Tag(name= "Endpoints de assinatura")
     @PostMapping("/subscribe")
     @Operation(summary = "Criar assinatura de plano")
     @ApiResponse(responseCode = "201", description = "Assinatura criada com sucesso", content = {
@@ -86,7 +87,7 @@ public class SubscriptionController {
         return new ResponseEntity<>(newSubscription, HttpStatus.CREATED);
     }
 
-    @PatchMapping("/subcribe/{subscriptionId}")
+    @PatchMapping("/subscribe/{subscriptionId}")
     @Transactional
     @Operation(summary = "Cancelar assinatura de plano")
     public ResponseEntity<Subscription> canceledSubcription(@PathVariable Long subscriptionId) {
@@ -94,7 +95,7 @@ public class SubscriptionController {
         return new ResponseEntity<>(subscription, HttpStatus.OK);
     }
 
-    @PatchMapping("/subcribe/change_plan")
+    @PatchMapping("/subscribe/change_plan")
     @Transactional
     @Operation(summary = "Alterar plano da assiantura")
     public ResponseEntity<Subscription> changeSubcriptionPlan(@RequestBody SubscriptionPlanIdDTO subscriptionPlanIdDTO){
@@ -102,5 +103,4 @@ public class SubscriptionController {
         Subscription subscription = subscriptionService.changeSubscriptionPlan(planId, subscriptionPlanIdDTO.planId());
         return new ResponseEntity<>(subscription, HttpStatus.OK);
     }
-
 }
