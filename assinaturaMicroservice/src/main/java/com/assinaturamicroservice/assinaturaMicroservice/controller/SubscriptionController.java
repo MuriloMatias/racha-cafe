@@ -2,11 +2,12 @@ package com.assinaturamicroservice.assinaturaMicroservice.controller;
 
 
 import com.assinaturamicroservice.assinaturaMicroservice.domain.assinatura.Plan;
-import com.assinaturamicroservice.assinaturaMicroservice.domain.assinatura.User;
+import com.assinaturamicroservice.assinaturaMicroservice.domain.assinatura.Subscription;
 import com.assinaturamicroservice.assinaturaMicroservice.dtos.PlanDTO;
-import com.assinaturamicroservice.assinaturaMicroservice.dtos.UserDTO;
+import com.assinaturamicroservice.assinaturaMicroservice.dtos.SubscriptionDTO;
+import com.assinaturamicroservice.assinaturaMicroservice.dtos.SubscriptionPlanIdDTO;
 import com.assinaturamicroservice.assinaturaMicroservice.service.PlanService;
-import com.assinaturamicroservice.assinaturaMicroservice.service.UserService;
+import com.assinaturamicroservice.assinaturaMicroservice.service.SubscriptionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -14,8 +15,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.support.Repositories;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,7 +32,7 @@ public class SubscriptionController {
     private PlanService planService;
 
     @Autowired
-    private UserService userService;
+    private SubscriptionService subscriptionService;
 
     @PostMapping("/plan")
     @Operation(summary = "Criação de plano")
@@ -70,23 +71,36 @@ public class SubscriptionController {
         return new ResponseEntity<>(updatePlan, HttpStatus.OK);
     }
 
-    @PostMapping("/user")
+    @Tag(name= "Endpoints de assinatura")
+    @PostMapping("/subscribe")
     @Operation(summary = "Criar assinatura de plano")
     @ApiResponse(responseCode = "201", description = "Assinatura criada com sucesso", content = {
-            @Content(mediaType = "application/json", schema = @Schema(implementation = UserDTO.class), examples = {
-                    @ExampleObject(value = "{\"id\": 1, \"name\": \"José\", \"email\": \"jose@ufms.br\", \"plan\": {\"id\": 1, \"name\": \"Café todo dia\", \"description\": \"Plano específico para um cafézinho no final de tarde\", \"isDeleted\": \"false\"} }")
+            @Content(mediaType = "application/json", schema = @Schema(implementation = SubscriptionDTO.class), examples = {
+                    @ExampleObject(value = "{\"subscriptionId\": 1, \"userId\": \"userId\", \"plan\": {\"id\": 1, \"name\": \"Café todo dia\", \"description\": \"Plano específico para um cafézinho no final de tarde\", \"isDeleted\": \"false\"} }")
             })
     })
-    public ResponseEntity<User> createUser(@RequestBody UserDTO userData) {
-        User newUser = userService.createUser(userData);
-        return new ResponseEntity<>(newUser, HttpStatus.CREATED);
+    public ResponseEntity<Subscription> createSubscribe(@RequestBody SubscriptionPlanIdDTO subscriptionPlanIdData) {
+        Plan plan = new Plan();
+        plan.setId(subscriptionPlanIdData.planId());
+        SubscriptionDTO subscriptionData = new SubscriptionDTO(subscriptionPlanIdData.id(), plan);
+        Subscription newSubscription = subscriptionService.createSubscription(subscriptionData);
+        return new ResponseEntity<>(newSubscription, HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/user/{id}")
+    @PatchMapping("/subscribe/{subscriptionId}")
     @Transactional
     @Operation(summary = "Cancelar assinatura de plano")
-    public ResponseEntity<User> canceledUserPlan(@PathVariable Long id) {
-        User user = userService.canceledUserPlan(id);
-        return new ResponseEntity<>(user, HttpStatus.OK);
+    public ResponseEntity<Subscription> canceledSubcription(@PathVariable Long subscriptionId) {
+        Subscription subscription = subscriptionService.canceledSubcription(subscriptionId);
+        return new ResponseEntity<>(subscription, HttpStatus.OK);
+    }
+
+    @PatchMapping("/subscribe/change_plan")
+    @Transactional
+    @Operation(summary = "Alterar plano da assiantura")
+    public ResponseEntity<Subscription> changeSubcriptionPlan(@RequestBody SubscriptionPlanIdDTO subscriptionPlanIdDTO){
+        Long planId = Long.parseLong(subscriptionPlanIdDTO.id());
+        Subscription subscription = subscriptionService.changeSubscriptionPlan(planId, subscriptionPlanIdDTO.planId());
+        return new ResponseEntity<>(subscription, HttpStatus.OK);
     }
 }

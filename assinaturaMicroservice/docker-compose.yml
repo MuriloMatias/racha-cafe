@@ -7,11 +7,11 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - mysql
+      - mysql_db
     networks:
       - td_soft
 
-  mysql:
+  mysql_db:
     image: mysql:latest
     container_name: racha-cafe
     environment:
