@@ -16,7 +16,7 @@ public class Plan {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @Column(unique = true, length = 128)
+    @Column(length = 128)
     private String name;
 
     @Column(length = 4096)
