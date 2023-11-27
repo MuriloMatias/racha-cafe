@@ -89,7 +89,7 @@ public class SubscriptionController {
     public ResponseEntity<Subscription> createSubscribe(@AuthenticationPrincipal Jwt jwt, @RequestBody idDTO planId) {
         String userId = jwt.getSubject();
         Plan plan = new Plan();
-        plan.setId(planId.Id());
+        plan.setId(planId.planId());
         SubscriptionDTO subscriptionData = new SubscriptionDTO(userId, plan);
         Subscription newSubscription = subscriptionService.createSubscription(subscriptionData);
         return new ResponseEntity<>(newSubscription, HttpStatus.CREATED);
