@@ -7,9 +7,11 @@ import com.assinaturamicroservice.assinaturaMicroservice.exceptions.Subscription
 import com.assinaturamicroservice.assinaturaMicroservice.repositories.PlanRepository;
 import com.assinaturamicroservice.assinaturaMicroservice.repositories.SubscriptionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
 import javax.swing.text.html.Option;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -45,6 +47,12 @@ public class SubscriptionService {
             throw new NoSuchElementException("Assinatura");
         }
         return searchSubcription.get();
+    }
+
+    public List<Subscription> getAllSubscription(){
+        Subscription filter = new Subscription();
+        filter.setIsCanceled(Boolean.FALSE);
+        return this.subscriptionRepository.findAll(Example.of(filter));
     }
 
     public Subscription canceledSubcription(Long subscriptionId) {
