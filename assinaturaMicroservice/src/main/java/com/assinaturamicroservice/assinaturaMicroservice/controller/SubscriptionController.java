@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +40,7 @@ public class SubscriptionController {
 
     @PostMapping("/plan")
     @PreAuthorize("hasRole('default-roles-facoffee')")
-    @Operation(summary = "Criação de plano")
+    @Operation(summary = "Criação de plano", security = @SecurityRequirement(name = "bearerAuth"))
     public ResponseEntity<Plan> createPlan(@RequestBody PlanDTO planData) {
         Plan newPlan = planService.createPlan(planData);
         return new ResponseEntity<>(newPlan, HttpStatus.CREATED);
@@ -62,7 +63,7 @@ public class SubscriptionController {
     @DeleteMapping("/plan/{id}")
     @Transactional
     @PreAuthorize("hasRole('default-roles-facoffee')")
-    @Operation(summary = "Deletar planos")
+    @Operation(summary = "Deletar planos", security = @SecurityRequirement(name = "bearerAuth"))
     public ResponseEntity<?> deletePlan(@PathVariable Long id) {
         planService.deletePlan(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -71,15 +72,14 @@ public class SubscriptionController {
     @PatchMapping("/plan/{id}")
     @Transactional
     @PreAuthorize("hasRole('default-roles-facoffee')")
-    @Operation(summary = "Atualizar planos")
+    @Operation(summary = "Atualizar planos", security = @SecurityRequirement(name = "bearerAuth"))
     public ResponseEntity<Plan> updatePlan(@PathVariable Long id, @RequestBody PlanDTO data) {
         Plan updatePlan = planService.updatePlan(id, data);
         return new ResponseEntity<>(updatePlan, HttpStatus.OK);
     }
 
-    @Tag(name= "Endpoints de assinatura")
     @PostMapping("/subscribe")
-    @Operation(summary = "Criar assinatura de plano")
+    @Operation(summary = "Criar assinatura de plano", security = @SecurityRequirement(name = "bearerAuth"))
     @PreAuthorize("hasRole('default-roles-facoffee')")
     @ApiResponse(responseCode = "201", description = "Assinatura criada com sucesso", content = {
             @Content(mediaType = "application/json", schema = @Schema(implementation = SubscriptionDTO.class), examples = {
@@ -97,7 +97,7 @@ public class SubscriptionController {
 
     @PatchMapping("/subscribe/{subscriptionId}")
     @Transactional
-    @Operation(summary = "Cancelar assinatura de plano")
+    @Operation(summary = "Cancelar assinatura de plano", security = @SecurityRequirement(name = "bearerAuth"))
     @PreAuthorize("hasRole('default-roles-facoffee')")
     public ResponseEntity<Subscription> canceledSubcription(@PathVariable Long subscriptionId) {
         Subscription subscription = subscriptionService.canceledSubcription(subscriptionId);
@@ -106,7 +106,7 @@ public class SubscriptionController {
 
     @PatchMapping("/subscribe/change_plan")
     @Transactional
-    @Operation(summary = "Alterar plano da assinatura")
+    @Operation(summary = "Alterar plano da assinatura", security = @SecurityRequirement(name = "bearerAuth"))
     @PreAuthorize("hasRole('default-roles-facoffee')")
     public ResponseEntity<Subscription> changeSubcriptionPlan(@RequestBody SubscriptionPlanIdDTO subscriptionPlanIdDTO){
         Long planId = Long.parseLong(subscriptionPlanIdDTO.id());

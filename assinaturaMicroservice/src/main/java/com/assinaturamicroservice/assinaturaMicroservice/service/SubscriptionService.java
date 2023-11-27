@@ -29,7 +29,7 @@ public class SubscriptionService {
 
         Plan plan = this.planService.getPlanByid(subscriptionDTO.plan().getId());
         Optional<Subscription> subscription = this.subscriptionRepository.findSubscriptionByUserId(subscriptionDTO.userId());
-        if(subscription.isPresent()){
+        if(subscription.isPresent() && subscription.get().getIsCanceled() == Boolean.FALSE){
             throw new SubscriptionCreationException.subscriptionAlreadyRegisterd();
         }
         subscriptionDTO.plan().setName(plan.getName());
@@ -46,7 +46,6 @@ public class SubscriptionService {
         }
         return searchSubcription.get();
     }
-
 
     public Subscription canceledSubcription(Long subscriptionId) {
         Subscription subscription = getSubcriptionById(subscriptionId);
