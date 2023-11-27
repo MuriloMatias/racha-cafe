@@ -1,6 +1,5 @@
-package com.assinaturamicroservice.assinaturaMicroservice.infra.security;
+package com.racha.cafe.ms.authMicroservice.domain.auth.security;
 
-import org.springframework.context.annotation.Bean;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

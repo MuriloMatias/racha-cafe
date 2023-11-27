@@ -3,6 +3,7 @@ package com.assinaturamicroservice.assinaturaMicroservice.controller;
 
 import com.assinaturamicroservice.assinaturaMicroservice.domain.assinatura.Plan;
 import com.assinaturamicroservice.assinaturaMicroservice.domain.assinatura.Subscription;
+import com.assinaturamicroservice.assinaturaMicroservice.dtos.idDTO;
 import com.assinaturamicroservice.assinaturaMicroservice.dtos.PlanDTO;
 import com.assinaturamicroservice.assinaturaMicroservice.dtos.SubscriptionDTO;
 import com.assinaturamicroservice.assinaturaMicroservice.dtos.SubscriptionPlanIdDTO;
@@ -15,10 +16,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,6 +38,7 @@ public class SubscriptionController {
     private SubscriptionService subscriptionService;
 
     @PostMapping("/plan")
+    @PreAuthorize("hasRole('default-roles-facoffee')")
     @Operation(summary = "Criação de plano")
     public ResponseEntity<Plan> createPlan(@RequestBody PlanDTO planData) {
         Plan newPlan = planService.createPlan(planData);
@@ -57,6 +61,7 @@ public class SubscriptionController {
 
     @DeleteMapping("/plan/{id}")
     @Transactional
+    @PreAuthorize("hasRole('default-roles-facoffee')")
     @Operation(summary = "Deletar planos")
     public ResponseEntity<?> deletePlan(@PathVariable Long id) {
         planService.deletePlan(id);
@@ -65,6 +70,7 @@ public class SubscriptionController {
 
     @PatchMapping("/plan/{id}")
     @Transactional
+    @PreAuthorize("hasRole('default-roles-facoffee')")
     @Operation(summary = "Atualizar planos")
     public ResponseEntity<Plan> updatePlan(@PathVariable Long id, @RequestBody PlanDTO data) {
         Plan updatePlan = planService.updatePlan(id, data);
@@ -74,15 +80,17 @@ public class SubscriptionController {
     @Tag(name= "Endpoints de assinatura")
     @PostMapping("/subscribe")
     @Operation(summary = "Criar assinatura de plano")
+    @PreAuthorize("hasRole('default-roles-facoffee')")
     @ApiResponse(responseCode = "201", description = "Assinatura criada com sucesso", content = {
             @Content(mediaType = "application/json", schema = @Schema(implementation = SubscriptionDTO.class), examples = {
                     @ExampleObject(value = "{\"subscriptionId\": 1, \"userId\": \"userId\", \"plan\": {\"id\": 1, \"name\": \"Café todo dia\", \"description\": \"Plano específico para um cafézinho no final de tarde\", \"isDeleted\": \"false\"} }")
             })
     })
-    public ResponseEntity<Subscription> createSubscribe(@RequestBody SubscriptionPlanIdDTO subscriptionPlanIdData) {
+    public ResponseEntity<Subscription> createSubscribe(@AuthenticationPrincipal Jwt jwt, @RequestBody idDTO planId) {
+        String userId = jwt.getSubject();
         Plan plan = new Plan();
-        plan.setId(subscriptionPlanIdData.planId());
-        SubscriptionDTO subscriptionData = new SubscriptionDTO(subscriptionPlanIdData.id(), plan);
+        plan.setId(planId.Id());
+        SubscriptionDTO subscriptionData = new SubscriptionDTO(userId, plan);
         Subscription newSubscription = subscriptionService.createSubscription(subscriptionData);
         return new ResponseEntity<>(newSubscription, HttpStatus.CREATED);
     }
@@ -90,6 +98,7 @@ public class SubscriptionController {
     @PatchMapping("/subscribe/{subscriptionId}")
     @Transactional
     @Operation(summary = "Cancelar assinatura de plano")
+    @PreAuthorize("hasRole('default-roles-facoffee')")
     public ResponseEntity<Subscription> canceledSubcription(@PathVariable Long subscriptionId) {
         Subscription subscription = subscriptionService.canceledSubcription(subscriptionId);
         return new ResponseEntity<>(subscription, HttpStatus.OK);
@@ -97,7 +106,8 @@ public class SubscriptionController {
 
     @PatchMapping("/subscribe/change_plan")
     @Transactional
-    @Operation(summary = "Alterar plano da assiantura")
+    @Operation(summary = "Alterar plano da assinatura")
+    @PreAuthorize("hasRole('default-roles-facoffee')")
     public ResponseEntity<Subscription> changeSubcriptionPlan(@RequestBody SubscriptionPlanIdDTO subscriptionPlanIdDTO){
         Long planId = Long.parseLong(subscriptionPlanIdDTO.id());
         Subscription subscription = subscriptionService.changeSubscriptionPlan(planId, subscriptionPlanIdDTO.planId());
