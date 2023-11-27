@@ -95,6 +95,20 @@ public class SubscriptionController {
         return new ResponseEntity<>(newSubscription, HttpStatus.CREATED);
     }
 
+    @GetMapping("/subscribe/{id}")
+    @Operation(summary = "Buscar assinatura por id")
+    public ResponseEntity<Subscription> getSubcriptionById(@PathVariable Long id) {
+        Subscription newSubscription = subscriptionService.getSubcriptionById(id);
+        return new ResponseEntity<>(newSubscription, HttpStatus.OK);
+    }
+
+    @GetMapping("/subscribe")
+    @Operation(summary = "Buscar todas as assinaturas")
+    public ResponseEntity<List<Subscription>> getAllSubscription() {
+        List<Subscription> allSubscription = subscriptionService.getAllSubscription();
+        return new ResponseEntity<>(allSubscription, HttpStatus.OK);
+    }
+
     @PatchMapping("/subscribe/{subscriptionId}")
     @Transactional
     @Operation(summary = "Cancelar assinatura de plano", security = @SecurityRequirement(name = "bearerAuth"))
